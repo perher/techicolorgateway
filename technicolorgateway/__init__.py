@@ -18,14 +18,14 @@ class TechnicolorGateway(object):
     def __init__(self, host, port, user, password) -> None:
         self._host = host
         self._port = port
-        self._uri = f'http://{host}:{port}'
+        self._uri = 'http{}://{}:{}'.format("" if str(port) == "80" else "s", host, port)
         self._user = user
         self._password = password
         self._br = RoboBrowser(history=True, parser="html.parser")
 
     def srp6authenticate(self):
         try:
-            self._br.open(self._uri)
+            self._br.open(self._uri, verify=False)
             token = self._br.find(lambda tag: tag.has_attr('name') and tag['name'] == 'CSRFtoken')['content']
             _LOGGER.debug('Got CSRF token: %s', token)
 
@@ -33,7 +33,7 @@ class TechnicolorGateway(object):
             uname, A = usr.start_authentication()
             _LOGGER.debug('A value %s', binascii.hexlify(A))
 
-            self._br.open(f'{self._uri}/authenticate', method='post',
+            self._br.open(f'{self._uri}/authenticate', method='post', verify=False,
                           data=urlencode({'CSRFtoken': token, 'I': uname, 'A': binascii.hexlify(A)}))
             _LOGGER.debug("br.response %s", self._br.response)
             j = json.decoder.JSONDecoder().decode(self._br.parsed.decode())
@@ -41,7 +41,7 @@ class TechnicolorGateway(object):
 
             M = usr.process_challenge(binascii.unhexlify(j['s']), binascii.unhexlify(j['B']))
             _LOGGER.debug("M value %s", binascii.hexlify(M))
-            self._br.open(f'{self._uri}/authenticate', method='post',
+            self._br.open(f'{self._uri}/authenticate', method='post', verify=False,
                           data=urlencode({'CSRFtoken': token, 'M': binascii.hexlify(M)}))
             _LOGGER.debug("br.response %s", self._br.response)
             j = json.decoder.JSONDecoder().decode(self._br.parsed.decode())

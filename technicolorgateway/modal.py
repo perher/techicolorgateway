@@ -44,6 +44,8 @@ def get_device_modal(content):
                 continue
             if len(cols) == 6:
                 data.append({'name': cols[1], 'ip': cols[2], 'mac': cols[3]})
+            if len(cols) == 11:
+                data.append({'name': cols[1], 'ip': cols[2], 'mac': cols[4]})
             if len(cols) == 12:
                 data.append({'name': cols[1], 'ip': cols[2], 'mac': cols[4]})
             if len(cols) == 8:

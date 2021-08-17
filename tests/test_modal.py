@@ -66,3 +66,17 @@ class TestModal:
         assert modal_list[0]['name'] == 'Mate'
         assert modal_list[0]['ip'] == '192.168.1.2'
         assert modal_list[0]['mac'] == '02:11:12:12:12:12'
+
+    def test_get_device_modal_fw_18_1(self):
+        with open('tests/resources/device-modal_18_1_fw.lp') as f:
+            content = f.read()
+        modal_list = get_device_modal(content)
+        print('\n')
+        print(modal_list)
+        assert len(modal_list) == 2
+        assert modal_list[0]['name'] == 'Computer'
+        assert modal_list[0]['ip'] == '192.168.1.2'
+        assert modal_list[0]['mac'] == '00:11:22:33:44:55'
+        assert modal_list[-1]['name'] == 'android'
+        assert modal_list[-1]['ip'] == '192.168.1.23'
+        assert modal_list[-1]['mac'] == 'F0:5b:12:34:56:78'
